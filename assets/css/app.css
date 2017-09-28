@@ -1,3 +1,8 @@
+* 
+{
+	box-sizing: border-box;
+}
+
 html, body
 {
 	margin: 0;
@@ -35,7 +40,7 @@ h2
 	background: #232323;
 }
 
-.map
+.map, .list
 {
 	width: 100%;
 	height: calc(100% - 48px);
@@ -43,7 +48,14 @@ h2
 	background: #232323;
 }
 
-#button
+.list
+{
+
+	color: #FFf;
+	padding: 20px;
+}
+
+.button, .button-locate
 {
 	color: #FFF;
 	background: #121212;
@@ -51,6 +63,28 @@ h2
 	border: 0;
 	outline: 0;
 
-	width: 100%;
+	float: left;
+
+	width: calc(50% - 25px);
 	height: 48px;
+}
+
+.button-locate
+{
+	width: 50px;
+}
+
+.button-fullwidth
+{
+	width: 100%;
+}
+
+.button:hover, .button-locate:hover
+{
+	background: #202020;
+}
+
+.hidden
+{
+	display: none;
 }

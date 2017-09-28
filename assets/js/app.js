@@ -4,9 +4,11 @@
 
 var map
 var positionMarker
+var debug_locate = true
 
 var initMap = () =>
 {
+
 	var defaultLoc = {lat: 46.2276, lng: 2.2137}
 	var infoWindow = new google.maps.InfoWindow
 	
@@ -97,59 +99,102 @@ var initMap = () =>
 		]
 	})
 
-	navigator.geolocation.getCurrentPosition((pos) =>
+	if (debug_locate)
 	{
-		var position   = {lat: pos.coords.latitude, lng: pos.coords.longitude}
-		map.setCenter(position);
-		map.setZoom(15);
 
-		// Current Location Marker
-		positionMarker = new google.maps.Marker(
-		{
-			position: map.getCenter(),
-			icon:
-			{
-				path: google.maps.SymbolPath.CIRCLE,
-				scale: 7,
-				strokeWeight: 2,
-				strokeColor: "#FFF"
-			},
-			draggable: false,
-			map: map
-		})
-
-		// Current Location Information Window
-		infoWindow.setPosition(position);
-		infoWindow.setContent('You are here.');
-		infoWindow.open(map);
-	})
-
-
-	setInterval(() =>
-	{
 		navigator.geolocation.getCurrentPosition((pos) =>
 		{
-			var position = {lat: pos.coords.latitude, lng: pos.coords.longitude}
-			
-			positionMarker.setPosition(position)
-			map.setCenter(position)
+			var position   = {lat: pos.coords.latitude, lng: pos.coords.longitude}
+			map.setCenter(position);
+			map.setZoom(15);
+
+			// Current Location Marker
+			positionMarker = new google.maps.Marker(
+			{
+				position: map.getCenter(),
+				icon:
+				{
+					path: google.maps.SymbolPath.CIRCLE,
+					scale: 7,
+					strokeWeight: 2,
+					strokeColor: "#FFF"
+				},
+				draggable: false,
+				map: map
+			})
+
+			// Current Location Information Window
+			infoWindow.setPosition(position);
+			infoWindow.setContent('You are here.');
+			infoWindow.open(map);
 		})
 
-	}, 1000)
+
+		setInterval(() =>
+		{
+			navigator.geolocation.getCurrentPosition((pos) =>
+			{
+				var position = {lat: pos.coords.latitude, lng: pos.coords.longitude}
+				
+				positionMarker.setPosition(position)
+				// map.setCenter(position)
+			})
+
+		}, 1000)
+	}
 }
 
-document.getElementById("button").addEventListener("click", () =>
+$("#createMarker").click(() =>
 {
 	navigator.geolocation.getCurrentPosition((pos) =>
 	{
-		var position = {lat: pos.coords.latitude, lng: pos.coords.longitude}
+		var position   = {lat: pos.coords.latitude, lng: pos.coords.longitude}
+		var markername = prompt("Please name the marker", "My car")
 		
 		// Position Marker
 		var marker = new google.maps.Marker(
 		{
 			position: position,
 			map: map,
-			label: "Position enregistré"
+			label: 
+			{
+				text: markername,
+				color: "#FFF"
+			}
 		})
+	})
+})
+
+$("#listMarkers").click(() =>
+{
+	var listMarkers = $("#listMarkers")
+
+	// Toggle class
+	$("#map").toggleClass("hidden")
+	$("#list").toggleClass("hidden")
+	$("#locate").toggleClass("hidden")
+	listMarkers.toggleClass("button-fullwidth")
+	$("#createMarker").toggleClass("hidden")
+	
+	// Change text
+	if (listMarkers.text() == "Return to map")
+	{
+		listMarkers.text("Show markers")
+	}
+	else
+	{
+		listMarkers.text("Return to map")
+
+	}
+})
+
+$("#locate").click(() =>
+{
+	navigator.geolocation.getCurrentPosition((pos) =>
+	{
+		var position = {lat: pos.coords.latitude, lng: pos.coords.longitude}
+		
+		positionMarker.setPosition(position)
+		map.setCenter(position)
 	})
 })
