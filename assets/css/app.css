@@ -88,3 +88,74 @@ h2
 {
 	display: none;
 }
+
+/* LISTS */
+table.table {
+	width: calc(100% - 50px);
+	margin: 25px;
+	border-collapse: collapse;
+	text-align: left;
+	border: 1px solid #ededed;
+	border-radius: 0;
+	background-color: #fff;
+	background-clip: padding-box;
+	-webkit-box-shadow: 0 4px 4px rgba(242, 242, 242, .56);
+	        box-shadow: 0 4px 4px rgba(242, 242, 242, .56);
+}
+
+table.table td {
+	padding: 7px 13px;
+	vertical-align: middle;
+	border: 1px solid #fff;
+	border-top: none;
+}
+
+table.table td.center {
+	text-align: center;
+}
+
+table.table td.fw {
+	white-space: nowrap;
+}
+
+table.table td.mobile-hidden {
+	display: none;
+}
+
+table.table th {
+	font-size: 16px;
+	font-weight: 700;
+	padding: 7px 13px;
+	vertical-align: middle;
+	color: #3f4751;
+	border: 1px solid #303030;
+	border-top: none;
+	border-top: none;
+	border-bottom: none;
+}
+
+table.table th.mobile-hidden {
+	display: none;
+}
+
+table.table tr.fw {
+	white-space: nowrap;
+}
+
+table.table tr:hover {
+	background: #fff !important;
+}
+
+table.table tr:nth-child(2n) {
+	background-color: #fff;
+}
+
+.button-action
+{
+	border: none;
+	outline: none;
+	padding: 5px 25px;
+
+	color: #FFF;
+	background: #202020;
+}

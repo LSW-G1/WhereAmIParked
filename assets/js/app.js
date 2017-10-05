@@ -2,22 +2,22 @@
 // VERSION 1.00
 // ARNAUD Louis, TARTIERE Kevin
 
+// VARIABLES
 var map
-var positionMarker
-var debug_locate = true
+var currentPositionMarker
 
-var initMap = () =>
+$(document).ready(() =>
 {
 
-	var defaultLoc = {lat: 46.2276, lng: 2.2137}
-	var infoWindow = new google.maps.InfoWindow
-	
-	// Google Map, centered on user's position
+	var defaultLocation = {lat: 46.2276, lng: 2.2137}
+
+	// Create Google MAP
 	map = new google.maps.Map(document.getElementById('map'),
 	{
 		zoom: 5,
-		center: defaultLoc,
-		styles: [
+		center: defaultLocation,
+		styles:
+		[
 			{elementType: 'geometry', stylers: [{color: '#242f3e'}]},
 			{elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
 			{elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
@@ -99,102 +99,170 @@ var initMap = () =>
 		]
 	})
 
-	if (debug_locate)
+	// Current Location Marker
+	currentPositionMarker = new google.maps.Marker(
 	{
-
-		navigator.geolocation.getCurrentPosition((pos) =>
+		position: defaultLocation,
+		icon:
 		{
-			var position   = {lat: pos.coords.latitude, lng: pos.coords.longitude}
-			map.setCenter(position);
-			map.setZoom(15);
+			path: google.maps.SymbolPath.CIRCLE,
+			scale: 7,
+			strokeWeight: 2,
+			strokeColor: "#FFF"
+		},
+		draggable: false,
+		map: map
+	})
 
-			// Current Location Marker
-			positionMarker = new google.maps.Marker(
-			{
-				position: map.getCenter(),
-				icon:
-				{
-					path: google.maps.SymbolPath.CIRCLE,
-					scale: 7,
-					strokeWeight: 2,
-					strokeColor: "#FFF"
-				},
-				draggable: false,
-				map: map
-			})
+	var cookies = getCookie()
+	cookies.markers.forEach((cookie) =>
+	{
+		setMarker(cookie, cookie.name)
+	})
 
-			// Current Location Information Window
-			infoWindow.setPosition(position);
-			infoWindow.setContent('You are here.');
-			infoWindow.open(map);
-		})
+	setInterval(() =>
+	{
+		getCurrentPosition(false)
+	}, 1000)
 
+	// TIMEOUT: somehow prevents not zooming at the loading of the app (~1/3 of the time)
+	setTimeout(() =>
+	{
+		getCurrentPosition(true)
+	}, 750)
 
-		setInterval(() =>
+})
+
+// FUNCTION: Get user's position
+getCurrentPosition = (rezoom, callback) =>
+{
+
+	console.log(" > DEBUG: getCurrentPosition - " + rezoom)
+
+	navigator.geolocation.getCurrentPosition((position) =>
+	{
+		var localization =
 		{
-			navigator.geolocation.getCurrentPosition((pos) =>
-			{
-				var position = {lat: pos.coords.latitude, lng: pos.coords.longitude}
-				
-				positionMarker.setPosition(position)
-				// map.setCenter(position)
-			})
+			lat: position.coords.latitude,
+			lng: position.coords.longitude
+		}
+		
+		if (rezoom)
+		{
+			map.setCenter(localization)
+			map.setZoom(15)
+		}
 
-		}, 1000)
+		if (currentPositionMarker)
+		{
+			currentPositionMarker.setPosition(localization)
+		}
+
+		if (callback)
+		{
+			callback(localization)
+		}
+	})
+}
+
+// FUNCTION: create cookie
+setCookie = (cookie) =>
+{
+	console.log(" > DEBUG: setCooie - " + cookie)
+
+	var date = new Date()
+	date.setTime(date.getTime() + (7*24*60*60*1000))
+
+	if (cookie)
+	{
+		document.cookie = 'MARKERS=' + JSON.stringify(cookie) + ";expires=" + date
 	}
 }
 
-$("#createMarker").click(() =>
+// FUNCTION: read cookie
+getCookie = () =>
 {
-	navigator.geolocation.getCurrentPosition((pos) =>
+	console.log(" > DEBUG: getCookie")
+
+	var date = new Date()
+	date.setTime(date.getTime() + (7*24*60*60*1000))
+
+	if (!document.cookie)
 	{
-		var position   = {lat: pos.coords.latitude, lng: pos.coords.longitude}
-		var markername = prompt("Please name the marker", "My car")
-		
-		// Position Marker
-		var marker = new google.maps.Marker(
+	//	document.cookie = 'MARKERS={"markers":[], "updatedAt": ""}; expires=' + date
+		document.cookie = 'MARKERS={"markers":[]}; expires=' + date
+	}
+
+	var cookies = JSON.parse(document.cookie.split("=")[1])
+
+	return cookies
+}
+
+// FUNCTION: create new Marker
+setMarker = (localization, name) =>
+{
+	console.log(" > DEBUG: setMarker - " + JSON.stringify(localization) + " - " + name)
+
+	new google.maps.Marker(
+	{
+		position: localization,
+		map: map,
+		label: 
 		{
-			position: position,
-			map: map,
-			label: 
-			{
-				text: markername,
-				color: "#FFF"
-			}
-		})
+			text: name,
+			color: "#FFF" 
+		}
 	})
+
+	$("#tbody").append("<tr><th>" + name + "</th><th width='290px'><button class='button-action'>RENOMMER</button> <button class='button-action'>SUPPRIMER</button>")
+}
+
+// LEFT BUTTON: Create a marker on this position
+$("#setMarker").click(() =>
+{
+	var cookies = getCookie()
+	var name    = prompt("Please name your new marker")
+	
+	if (name)
+	{
+		getCurrentPosition(true, (localization) =>
+		{
+			localization.name = name
+			cookies.markers.push(localization)
+			
+			setCookie(cookies)
+			setMarker(localization, name)
+
+		})
+	}
 })
 
-$("#listMarkers").click(() =>
+// MIDDLE BUTTON: Locate the user, and center map.
+$("#locate").click(() =>
 {
-	var listMarkers = $("#listMarkers")
+	getCurrentPosition(true)
+})
 
-	// Toggle class
+// RIGHT BUTTON: Switch to the markers list
+$("#getMarkers").click(() =>
+{
+	// MAPS AND LIST CLASS
 	$("#map").toggleClass("hidden")
 	$("#list").toggleClass("hidden")
-	$("#locate").toggleClass("hidden")
-	listMarkers.toggleClass("button-fullwidth")
-	$("#createMarker").toggleClass("hidden")
 	
-	// Change text
-	if (listMarkers.text() == "Return to map")
+	// BUTTON CLASS
+	$("#locate").toggleClass("hidden")
+	$("#setMarker").toggleClass("hidden")
+	$("#getMarkers").toggleClass("button-fullwidth")
+
+	// CHANGE BUTTON TEXT
+	if ($("#getMarkers").text() == "Return to map")
 	{
-		listMarkers.text("Show markers")
+		$("#getMarkers").text("Show markers")
 	}
 	else
 	{
-		listMarkers.text("Return to map")
-
+		$("#getMarkers").text("Return to map")
 	}
-})
 
-$("#locate").click(() =>
-{
-	navigator.geolocation.getCurrentPosition((pos) =>
-	{
-		var position = {lat: pos.coords.latitude, lng: pos.coords.longitude}
-		
-		positionMarker.setPosition(position)
-		map.setCenter(position)
-	})
 })
