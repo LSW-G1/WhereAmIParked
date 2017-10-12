@@ -5,6 +5,7 @@
 // VARIABLES
 var map
 var currentPositionMarker
+var allMarkers = []
 
 $(document).ready(() =>
 {
@@ -117,13 +118,13 @@ $(document).ready(() =>
 	var cookies = getCookie()
 	cookies.markers.forEach((cookie) =>
 	{
-		setMarker(cookie, cookie.name)
+		setMarker(cookie, cookie.name, cookie.id)
 	})
 
 	setInterval(() =>
 	{
 		getCurrentPosition(false)
-	}, 1000)
+	}, 5000)
 
 	// TIMEOUT: somehow prevents not zooming at the loading of the app (~1/3 of the time)
 	setTimeout(() =>
@@ -168,7 +169,7 @@ getCurrentPosition = (rezoom, callback) =>
 // FUNCTION: create cookie
 setCookie = (cookie) =>
 {
-	console.log(" > DEBUG: setCooie - " + cookie)
+	console.log(" > DEBUG: setCookie -", cookie)
 
 	var date = new Date()
 	date.setTime(date.getTime() + (7*24*60*60*1000))
@@ -198,12 +199,13 @@ getCookie = () =>
 	return cookies
 }
 
-// FUNCTION: create new Marker
-setMarker = (localization, name) =>
-{
-	console.log(" > DEBUG: setMarker - " + JSON.stringify(localization) + " - " + name)
 
-	new google.maps.Marker(
+// FUNCTION: create new Marker
+setMarker = (localization, name, id) =>
+{
+	console.log(" > DEBUG: setMarker - " + name + " - " + JSON.stringify(localization))
+
+	let marker = new google.maps.Marker(
 	{
 		position: localization,
 		map: map,
@@ -214,13 +216,90 @@ setMarker = (localization, name) =>
 		}
 	})
 
-	$("#tbody").append("<tr><th>" + name + "</th><th width='290px'><button class='button-action'>RENOMMER</button> <button class='button-action'>SUPPRIMER</button>")
+	allMarkers.push({id: id, marker: marker})	
+	$("#tbody").append("<tr id='entry-" + id + "'><th id='name-" + id + "'>" + name + "</th><th width='290px'><button class='button-action' id='marker-rename-" + id + "'>RENOMMER</button> <button class='button-action' id='marker-delete-" + id + "'>SUPPRIMER</button>")
+
+	$("#marker-rename-" + id).click((e) =>
+	{
+		renameMarker(id)
+	})
+	
+	$("#marker-delete-" + id).click((e) =>
+	{
+		deleteMarker(id)
+	})
 }
+
+// FUNCTION: Generate UNIQID
+generateId = (size) =>
+{
+	var uniqID = ""
+	var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+
+	for (var i = 0; i < size; i++)
+	{
+		uniqID += characters.charAt(Math.floor(Math.random() * characters.length))
+	}
+
+	return uniqID
+}
+
+//FUNCTION : Change name of markers
+renameMarker = (id) =>
+{
+	var cookie = getCookie()
+	var name = prompt("How do you want to rename the marker? ")
+
+	allMarkers.find((markerObject) =>
+	{
+		if (id == markerObject.id)
+		{
+			markerObject.marker.setOptions({label: {text: name, color: "#FFFFFF"}})
+		}
+	})
+
+	$("#name-" + id).text(name)
+	
+	cookie.markers.find((markerObject) =>
+	{
+		if (id == markerObject.id)
+		{
+			markerObject.name = name
+			setCookie(cookie)
+		}
+	})
+}
+
+//FUNCTION : Change name of markers
+deleteMarker = (id) =>
+{
+	let cookie = getCookie()
+	allMarkers.find((markerObject) =>
+	{
+		if (id == markerObject.id)
+		{
+			markerObject.marker.setVisible(false)
+		}
+	})
+
+	$("#entry-" + id).html("")
+
+	cookie.markers.splice(
+		cookie.markers.findIndex((markerObject) =>
+		{
+			return (markerObject.id == id)
+		}), 1
+	)
+
+	setCookie(cookie)
+}
+
 
 // LEFT BUTTON: Create a marker on this position
 $("#setMarker").click(() =>
 {
 	var cookies = getCookie()
+	var id      = generateId(8)
 	var name    = prompt("Please name your new marker")
 	
 	if (name)
@@ -228,11 +307,11 @@ $("#setMarker").click(() =>
 		getCurrentPosition(true, (localization) =>
 		{
 			localization.name = name
+			localization.id = id
 			cookies.markers.push(localization)
 			
 			setCookie(cookies)
-			setMarker(localization, name)
-
+			setMarker(localization, name, id)
 		})
 	}
 })
@@ -264,5 +343,4 @@ $("#getMarkers").click(() =>
 	{
 		$("#getMarkers").text("Return to map")
 	}
-
 })
