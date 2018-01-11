@@ -9,95 +9,158 @@ var allMarkers = []
 
 $(document).ready(() =>
 {
-
-	var defaultLocation = {lat: 46.2276, lng: 2.2137}
+	var defaultLocation = {
+		lat: 46.2276,
+		lng: 2.2137
+	}
 
 	// Create Google MAP
 	map = new google.maps.Map(document.getElementById('map'),
 	{
 		zoom: 5,
 		center: defaultLocation,
-		styles:
-		[
-			{elementType: 'geometry', stylers: [{color: '#242f3e'}]},
-			{elementType: 'labels.text.stroke', stylers: [{color: '#242f3e'}]},
-			{elementType: 'labels.text.fill', stylers: [{color: '#746855'}]},
+		styles: [
+		{
+			elementType: 'geometry',
+			stylers: [
 			{
-				featureType: 'administrative.locality',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#d59563'}]
-			},
+				color: '#242f3e'
+			}]
+		},
+		{
+			elementType: 'labels.text.stroke',
+			stylers: [
 			{
-				featureType: 'poi',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#d59563'}]
-			},
+				color: '#242f3e'
+			}]
+		},
+		{
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'poi.park',
-				elementType: 'geometry',
-				stylers: [{color: '#263c3f'}]
-			},
+				color: '#746855'
+			}]
+		},
+		{
+			featureType: 'administrative.locality',
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'poi.park',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#6b9a76'}]
-			},
+				color: '#d59563'
+			}]
+		},
+		{
+			featureType: 'poi',
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'road',
-				elementType: 'geometry',
-				stylers: [{color: '#38414e'}]
-			},
+				color: '#d59563'
+			}]
+		},
+		{
+			featureType: 'poi.park',
+			elementType: 'geometry',
+			stylers: [
 			{
-				featureType: 'road',
-				elementType: 'geometry.stroke',
-				stylers: [{color: '#212a37'}]
-			},
+				color: '#263c3f'
+			}]
+		},
+		{
+			featureType: 'poi.park',
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'road',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#9ca5b3'}]
-			},
+				color: '#6b9a76'
+			}]
+		},
+		{
+			featureType: 'road',
+			elementType: 'geometry',
+			stylers: [
 			{
-				featureType: 'road.highway',
-				elementType: 'geometry',
-				stylers: [{color: '#746855'}]
-			},
+				color: '#38414e'
+			}]
+		},
+		{
+			featureType: 'road',
+			elementType: 'geometry.stroke',
+			stylers: [
 			{
-				featureType: 'road.highway',
-				elementType: 'geometry.stroke',
-				stylers: [{color: '#1f2835'}]
-			},
+				color: '#212a37'
+			}]
+		},
+		{
+			featureType: 'road',
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'road.highway',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#f3d19c'}]
-			},
+				color: '#9ca5b3'
+			}]
+		},
+		{
+			featureType: 'road.highway',
+			elementType: 'geometry',
+			stylers: [
 			{
-				featureType: 'transit',
-				elementType: 'geometry',
-				stylers: [{color: '#2f3948'}]
-			},
+				color: '#746855'
+			}]
+		},
+		{
+			featureType: 'road.highway',
+			elementType: 'geometry.stroke',
+			stylers: [
 			{
-				featureType: 'transit.station',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#d59563'}]
-			},
+				color: '#1f2835'
+			}]
+		},
+		{
+			featureType: 'road.highway',
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'water',
-				elementType: 'geometry',
-				stylers: [{color: '#17263c'}]
-			},
+				color: '#f3d19c'
+			}]
+		},
+		{
+			featureType: 'transit',
+			elementType: 'geometry',
+			stylers: [
 			{
-				featureType: 'water',
-				elementType: 'labels.text.fill',
-				stylers: [{color: '#515c6d'}]
-			},
+				color: '#2f3948'
+			}]
+		},
+		{
+			featureType: 'transit.station',
+			elementType: 'labels.text.fill',
+			stylers: [
 			{
-				featureType: 'water',
-				elementType: 'labels.text.stroke',
-				stylers: [{color: '#17263c'}]
-			}
-		]
+				color: '#d59563'
+			}]
+		},
+		{
+			featureType: 'water',
+			elementType: 'geometry',
+			stylers: [
+			{
+				color: '#17263c'
+			}]
+		},
+		{
+			featureType: 'water',
+			elementType: 'labels.text.fill',
+			stylers: [
+			{
+				color: '#515c6d'
+			}]
+		},
+		{
+			featureType: 'water',
+			elementType: 'labels.text.stroke',
+			stylers: [
+			{
+				color: '#17263c'
+			}]
+		}]
 	})
 
 	// Current Location Marker
@@ -142,12 +205,11 @@ getCurrentPosition = (rezoom, callback) =>
 
 	navigator.geolocation.getCurrentPosition((position) =>
 	{
-		var localization =
-		{
+		var localization = {
 			lat: position.coords.latitude,
 			lng: position.coords.longitude
 		}
-		
+
 		if (rezoom)
 		{
 			map.setCenter(localization)
@@ -172,7 +234,7 @@ setCookie = (cookie) =>
 	console.log(" > DEBUG: setCookie -", cookie)
 
 	var date = new Date()
-	date.setTime(date.getTime() + (7*24*60*60*1000))
+	date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000))
 
 	if (cookie)
 	{
@@ -186,11 +248,11 @@ getCookie = () =>
 	console.log(" > DEBUG: getCookie")
 
 	var date = new Date()
-	date.setTime(date.getTime() + (7*24*60*60*1000))
+	date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000))
 
 	if (!document.cookie)
 	{
-	//	document.cookie = 'MARKERS={"markers":[], "updatedAt": ""}; expires=' + date
+		//	document.cookie = 'MARKERS={"markers":[], "updatedAt": ""}; expires=' + date
 		document.cookie = 'MARKERS={"markers":[]}; expires=' + date
 	}
 
@@ -209,21 +271,25 @@ setMarker = (localization, name, id) =>
 	{
 		position: localization,
 		map: map,
-		label: 
+		label:
 		{
 			text: name,
-			color: "#FFF" 
+			color: "#FFF"
 		}
 	})
 
-	allMarkers.push({id: id, marker: marker})	
+	allMarkers.push(
+	{
+		id: id,
+		marker: marker
+	})
 	$("#tbody").append("<tr id='entry-" + id + "'><th id='name-" + id + "'>" + name + "</th><th width='290px'><button class='button-action' id='marker-rename-" + id + "'>RENOMMER</button> <button class='button-action' id='marker-delete-" + id + "'>SUPPRIMER</button>")
 
 	$("#marker-rename-" + id).click((e) =>
 	{
 		renameMarker(id)
 	})
-	
+
 	$("#marker-delete-" + id).click((e) =>
 	{
 		deleteMarker(id)
@@ -254,12 +320,19 @@ renameMarker = (id) =>
 	{
 		if (id == markerObject.id)
 		{
-			markerObject.marker.setOptions({label: {text: name, color: "#FFFFFF"}})
+			markerObject.marker.setOptions(
+			{
+				label:
+				{
+					text: name,
+					color: "#FFFFFF"
+				}
+			})
 		}
 	})
 
 	$("#name-" + id).text(name)
-	
+
 	cookie.markers.find((markerObject) =>
 	{
 		if (id == markerObject.id)
@@ -299,9 +372,9 @@ deleteMarker = (id) =>
 $("#setMarker").click(() =>
 {
 	var cookies = getCookie()
-	var id      = generateId(8)
-	var name    = prompt("Please name your new marker")
-	
+	var id = generateId(8)
+	var name = prompt("Please name your new marker")
+
 	if (name)
 	{
 		getCurrentPosition(true, (localization) =>
@@ -309,7 +382,7 @@ $("#setMarker").click(() =>
 			localization.name = name
 			localization.id = id
 			cookies.markers.push(localization)
-			
+
 			setCookie(cookies)
 			setMarker(localization, name, id)
 		})
@@ -328,7 +401,7 @@ $("#getMarkers").click(() =>
 	// MAPS AND LIST CLASS
 	$("#map").toggleClass("hidden")
 	$("#list").toggleClass("hidden")
-	
+
 	// BUTTON CLASS
 	$("#locate").toggleClass("hidden")
 	$("#setMarker").toggleClass("hidden")

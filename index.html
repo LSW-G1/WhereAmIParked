@@ -4,7 +4,6 @@
 		<title>Where Am I Parked</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-
 		<link rel="stylesheet" href="assets/css/app.css">
 		<link rel="stylesheet" href="assets/css/font-awesome.min.css">
 	</head>
@@ -12,8 +11,10 @@
 		<header class="header">
 			<h2>Where Am I Parked?</h2>
 		</header>
+
 		<div class="content">
 			<div class="map" id="map"></div>
+		
 			<div class="list hidden" id="list">
 				<table class="table">
 					<thead>
@@ -26,11 +27,13 @@
 					</tbody>
 				</table>
 			</div>
+		
 			<button class="button" id="setMarker">Save this location</button>
 			<button class="button-locate" id="locate"><i class="fa fa-compass" aria-hidden="true"></i></button>
 			<button class="button" id="getMarkers">Show markers</button>
+		
 		</div>
-
+		
 		<script src="assets/js/jquery-3.2.1.min.js"></script>
 		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCte2m6FA0FxP1ZlCg9CCThZmIPbQNeiDM"></script>
 		<script src="assets/js/app.js"></script>
